@@ -56,6 +56,7 @@ namespace Clown
 
         void Start()
         {
+            QualitySettings.vSyncCount = 1;
             startScreen.SetActive(true);
             setupScreen.SetActive(false);
             gameOverScreen.SetActive(false);
@@ -171,7 +172,7 @@ namespace Clown
             if (!player.isInvuln)
             {
                 timer -= 5;
-                timerText.text = "Time: " + timer;
+                timerText.text = "-5 Time: " + timer;
                 if (timer <= 0)
                 {
                     gameOverScreen.SetActive(true);
