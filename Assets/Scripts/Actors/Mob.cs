@@ -7,6 +7,7 @@ namespace Clown
 {
     public abstract class Mob : MonoBehaviour
     {
+        int unstuckCounter = 0;
         [NonSerialized] public Vector3Int homeCell;
         [NonSerialized] public Vector3Int currentCell;
         [NonSerialized] public Rigidbody2D rb2D;
@@ -16,11 +17,14 @@ namespace Clown
         [NonSerialized] public Vector3Int targetCell;
         [NonSerialized] public Vector3 movePosition;
         [NonSerialized] public Queue<Vector3> pathNodes;
-        public float speed;
+        [NonSerialized] public Transform playerTransform;
+        public float baseSpeed;
+        [NonSerialized] public float currentSpeed;
 
         void Awake()
         {
             rb2D = GetComponent<Rigidbody2D>();
+            currentSpeed = baseSpeed;
         }
 
         void Start()
@@ -39,10 +43,26 @@ namespace Clown
 
         public abstract void MoveMob();
 
-        protected void MoveTowards(Vector3 direction)
+        protected void MoveTowards(Vector3 direction, bool unstuck = true)
         {
-            float moveX = transform.position.x + (direction.x * speed * Time.deltaTime);
-            float moveY = transform.position.y + (direction.y * speed * Time.deltaTime);
+            if (unstuck)
+            {
+                if (Vector3.Distance(lastPosition, transform.position) <= .1)
+                {
+                    unstuckCounter += 1;
+                }
+                else
+                {
+                    unstuckCounter = 0;
+                }
+                if (unstuckCounter > 20)
+                {
+                    transform.position = movePosition;
+                    unstuckCounter = 0;
+                }
+            }
+            float moveX = transform.position.x + (direction.x * currentSpeed * Time.deltaTime);
+            float moveY = transform.position.y + (direction.y * currentSpeed * Time.deltaTime);
             lastPosition = transform.position;
             rb2D.MovePosition(new Vector2(moveX, moveY));
             currentCell = MapManager.s.tilemap.WorldToCell(transform.position);

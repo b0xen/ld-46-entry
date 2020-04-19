@@ -7,6 +7,8 @@ namespace Clown
 {
     public class Child : Mob
     {
+        [NonSerialized] public bool isGrabbed = false;
+
         public override Vector3 GetTargetPosition()
         {
             int targetCellIndex = UnityEngine.Random.Range(0, MapManager.s.homeCells.Count);
@@ -22,6 +24,12 @@ namespace Clown
 
         public override void MoveMob()
         {
+            if (isGrabbed)
+            {
+                MoveTowards((transform.position - playerTransform.position).normalized, false);
+                return;
+            }
+
             // Random wiggling
             Vector3 offset = new Vector3(UnityEngine.Random.Range(-.2f, .2f), UnityEngine.Random.Range(-.2f, .2f), 0);
             // STOP COLLIDING WITH EACH OTHER MORONS LMAO
@@ -31,8 +39,8 @@ namespace Clown
             {
                 if (i == 0) continue;
                 float angle = Mathf.Deg2Rad * ((45 * i) + Vector3.SignedAngle(Vector3.right, movePosition - transform.position, Vector3.forward));
-                RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0));
-                if (hit.collider != null && hit.distance < 4 || (hit.transform.GetComponent<Player>() || hit.transform.GetComponent<Mob>()))
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)), 10);
+                if (hit.collider != null && (hit.transform.GetComponent<Player>() || hit.transform.GetComponent<Mob>()))
                 {
                     if (hit.distance < smallestDistance)
                     {
@@ -45,7 +53,7 @@ namespace Clown
             }
             offset += antiCollisionVector;
             
-            if (Vector3.Distance(transform.position, targetPosition) < .5)
+            if (Vector3.Distance(transform.position, targetPosition) < 1)
             {
                 // You're donezo kid
                 GameManager.s.mobsToClear.Add(this);

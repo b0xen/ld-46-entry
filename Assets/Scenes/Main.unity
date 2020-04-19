@@ -232,12 +232,12 @@ PrefabInstance:
     - target: {fileID: 8297712462593931688, guid: ab38faaedd9e8d248ac5e4ed7965e8e7,
         type: 3}
       propertyPath: m_RefResolutionX
-      value: 480
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 8297712462593931688, guid: ab38faaedd9e8d248ac5e4ed7965e8e7,
         type: 3}
       propertyPath: m_RefResolutionY
-      value: 320
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8297712462593931690, guid: ab38faaedd9e8d248ac5e4ed7965e8e7,
         type: 3}

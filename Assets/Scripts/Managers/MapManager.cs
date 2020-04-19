@@ -32,10 +32,56 @@ namespace Clown
         public HomeEntryTile homeEntryTile;
         public HomeOtherTile homeOtherTile;
 
-        public static int[,] LEVEL_SIZE = new int[,] {
-            {21, 21},
-            {25, 15}
+        public static int[,] LEVEL_DEFINITION = new int[40,30] {
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,1,0,0,0, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,1,0,0,0, 0,0,0,0,0, 0,0,1,0,0},
+            {1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,1, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,1, 0,0,0,0,0, 0,0,1,0,0},
+
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,1, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,1, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,1,1, 1,1,1,1,0, 0,0,0,0,1, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,0,1,0, 0,0,0,0,1, 0,0,0,0,0, 0,0,1,1,1},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,0,1,0, 0,0,0,0,1, 0,0,0,0,0, 0,0,1,0,0},
+
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,0,1,0, 0,0,0,0,1, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,0,1,0, 0,1,1,1,1, 1,1,1,1,1, 1,1,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,0,1,0, 0,1,0,0,0, 0,0,0,0,1, 0,0,1,0,0},
+            {1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,0,0,0, 0,0,0,0,1, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1, 0,0,1,0,0},
+
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,1, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,1,1, 1,1,1,1,1, 0,0,0,0,1, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,1,0, 0,0,0,0,1, 0,0,0,0,1, 0,0,1,0,0},
+
+            {0,0,1,0,0, 0,0,1,1,1, 1,1,1,1,0, 0,0,0,0,1, 0,0,0,0,1, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,1,0, 0,0,0,0,1, 0,0,0,0,1, 1,1,1,1,1},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,1,1, 1,1,1,1,1, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,1,1},
+
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,0},
+            {1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,0, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,1,0,0, 1,0,0,1,0, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,1,0,0, 1,0,0,1,0, 0,0,0,0,0, 0,0,1,0,0},
+
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,1,0,0, 1,1,1,1,0, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,1,0,0, 0,0,0,1,0, 0,0,0,0,0, 0,0,1,1,1},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,1,0,0, 0,0,0,1,1, 1,1,1,1,1, 1,1,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,1,0,0, 0,0,0,1,0, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,1,1,1, 1,1,1,1,0, 0,0,0,0,0, 0,0,1,0,0},
+
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,1,0,0, 0,0,0,1,0, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,1,0,0, 0,0,0,1,0, 0,0,0,0,0, 0,0,1,0,0},
+            {1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,1,0, 0,0,0,0,0, 0,0,1,0,0},
+            {0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,1,0, 0,0,0,0,0, 0,0,1,0,0}
         };
+
         void Awake()
         {
             if (s == null)
@@ -52,9 +98,9 @@ namespace Clown
 
         public void CreateMap(int level)
         {
-            int maxX = LEVEL_SIZE[level, 0];
-            int maxY = LEVEL_SIZE[level, 1];
-            // First create the outer border and tile the inside with yard
+            int maxX = LEVEL_DEFINITION.GetLength(0);
+            int maxY = LEVEL_DEFINITION.GetLength(1);
+            // First create the outer border and put the roads in
             for (int x = -1; x <= maxX; x++)
             {
                 for (int y = -1; y <= maxY; y++)
@@ -63,54 +109,98 @@ namespace Clown
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), voidTile);
                     }
-                    else
-                    {
-                        tilemap.SetTile(new Vector3Int(x, y, 0), yardTile);
-                    }
-                }
-            }
-
-            // Create the inner loop. 
-            for (int x = 2; x < maxX - 2; x++)
-            {
-                for (int y = 2; y < maxY - 2; y++)
-                {
-                    if (x == 2 || x == maxX - 3 || y == 2 || y == maxY - 3)
+                    else if (LEVEL_DEFINITION[x, y] == 1)
                     {
                         tilemap.SetTile(new Vector3Int(x, y, 0), roadTile);
                     }
                 }
             }
 
-            // Create exits to the outside where the po-po can spawn
-            tilemap.SetTile(new Vector3Int(2, 0, 0), roadTile);
-            tilemap.SetTile(new Vector3Int(2, 1, 0), roadTile);
-            tilemap.SetTile(new Vector3Int(maxX - 3, 0, 0), roadTile);
-            tilemap.SetTile(new Vector3Int(maxX - 3, 1, 0), roadTile);
-            tilemap.SetTile(new Vector3Int(2, maxY - 2, 0), roadTile);
-            tilemap.SetTile(new Vector3Int(2, maxY - 1, 0), roadTile);
-            tilemap.SetTile(new Vector3Int(maxX - 3, maxY - 2, 0), roadTile);
-            tilemap.SetTile(new Vector3Int(maxX - 3, maxY - 1, 0), roadTile);
+            // Put the yards in
+            for (int x = 0; x < maxX; x++)
+            {
+                for (int y = 0; y < maxY; y++)
+                {
+                    if (LEVEL_DEFINITION[x, y] == 0)
+                    {
+                        tilemap.SetTile(new Vector3Int(x, y, 0), yardTile);
+                    }
+                }
+            }
 
-            // Set up the outer rows of houses
-            PlaceHouses(ChooseHouseSizes(maxY), new Vector3Int(0, 0, 0), 0);
-            PlaceHouses(ChooseHouseSizes(maxX - 6), new Vector3Int(3, 0, 0), 1);
-            PlaceHouses(ChooseHouseSizes(maxY), new Vector3Int(maxX - 2, 0, 0), 2);
-            PlaceHouses(ChooseHouseSizes(maxX - 6), new Vector3Int(3, maxY - 2, 0), 3);
+            // Set up all the houses. Unfortunately my brain is not big enough to do this generation procedurally within 2 days...
+            PlaceHouses(ChooseHouseSizes(2), new Vector3Int(0, 0, 0), new int[]{0, 1});
+            PlaceHouses(ChooseHouseSizes(10), new Vector3Int(3, 0, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(13), new Vector3Int(14, 0, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(9), new Vector3Int(28, 0, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(2), new Vector3Int(38, 0, 0), new int[]{1, 2});
 
-            // Set up some inner rows...RANDOMLY
-            PlaceHouses(ChooseHouseSizes(maxX - 6), new Vector3Int(3, 3, 0), 3);
-            PlaceHouses(ChooseHouseSizes(maxX - 6), new Vector3Int(3, maxY - 5, 0), 1);
-            PlaceHouses(ChooseHouseSizes(maxY - (6 + 4)), new Vector3Int(3, 3 + 2, 0), 2);
-            PlaceHouses(ChooseHouseSizes(maxY - (6 + 4)), new Vector3Int(maxX - 5, 3 + 2, 0), 0);
-        
-            // TODO stretch goal put in some roads that go in between the houses because it's boring
+            PlaceHouses(ChooseHouseSizes(13), new Vector3Int(0, 3, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(10), new Vector3Int(3, 3, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(4), new Vector3Int(14, 3, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(9), new Vector3Int(16, 3, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(4), new Vector3Int(25, 3, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(7), new Vector3Int(28, 3, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(7), new Vector3Int(30, 3, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(15), new Vector3Int(38, 3, 0), new int[]{2});
+
+            PlaceHouses(ChooseHouseSizes(5), new Vector3Int(3, 5, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(6), new Vector3Int(8, 7, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(8), new Vector3Int(11, 5, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(9), new Vector3Int(16, 5, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(7), new Vector3Int(28, 10, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(7), new Vector3Int(35, 5, 0), new int[]{0});
+
+            PlaceHouses(ChooseHouseSizes(11), new Vector3Int(3, 8, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(6), new Vector3Int(5, 8, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(4), new Vector3Int(7, 14, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(2), new Vector3Int(11, 14, 0), new int[]{0, 1, 3});
+            PlaceHouses(ChooseHouseSizes(9), new Vector3Int(14, 8, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(4), new Vector3Int(16, 8, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(4), new Vector3Int(21, 8, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(11), new Vector3Int(25, 8, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(6), new Vector3Int(28, 13, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(5), new Vector3Int(35, 13, 0), new int[]{0, 2});
+
+            PlaceHouses(ChooseHouseSizes(10), new Vector3Int(0, 17, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(6), new Vector3Int(3, 20, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(6), new Vector3Int(5, 17, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(7), new Vector3Int(9, 20, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(7), new Vector3Int(12, 17, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(7), new Vector3Int(16, 13, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(3), new Vector3Int(18, 10, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(3), new Vector3Int(19, 14, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(3), new Vector3Int(19, 17, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(3), new Vector3Int(21, 10, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(7), new Vector3Int(23, 13, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(3), new Vector3Int(27, 19, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(2), new Vector3Int(28, 16, 0), new int[]{0, 1, 2, 3});
+            PlaceHouses(ChooseHouseSizes(8), new Vector3Int(30, 19, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(2), new Vector3Int(31, 15, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(8), new Vector3Int(33, 19, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(8), new Vector3Int(35, 19, 0), new int[]{0});
+            PlaceHouses(ChooseHouseSizes(8), new Vector3Int(38, 19, 0), new int[]{2});
+
+            PlaceHouses(ChooseHouseSizes(5), new Vector3Int(3, 22, 0), new int[]{2});
+            PlaceHouses(ChooseHouseSizes(3), new Vector3Int(5, 25, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(9), new Vector3Int(12, 25, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(8), new Vector3Int(14, 22, 0), new int[]{1});
+            PlaceHouses(ChooseHouseSizes(5), new Vector3Int(18, 20, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(8), new Vector3Int(22, 25, 0), new int[]{1});
+            
+            PlaceHouses(ChooseHouseSizes(2), new Vector3Int(0, 28, 0), new int[]{0, 3});
+            PlaceHouses(ChooseHouseSizes(5), new Vector3Int(3, 28, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(12), new Vector3Int(9, 28, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(2), new Vector3Int(22, 28, 0), new int[]{0, 2, 3});
+            PlaceHouses(ChooseHouseSizes(6), new Vector3Int(25, 28, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(5), new Vector3Int(32, 28, 0), new int[]{3});
+            PlaceHouses(ChooseHouseSizes(2), new Vector3Int(38, 28, 0), new int[]{2, 3});
         }
 
         private List<int> ChooseHouseSizes(int length)
         {
-            // length must be >= 3
-            int[] houseChance = new int[] {4, 4, 3, 3, 2};
+            // length must be >= 2
+            int[] houseChance = new int[] {4, 4, 4, 3, 3, 2};
             List<int> houseSizes = new List<int>();
             int remaining = length;
             while (remaining >= 4)
@@ -128,8 +218,18 @@ namespace Clown
                 int houseIndex = houseSizes.FindIndex(x => x == 2 || x == 3);
                 if (houseIndex == -1)
                 {
-                    // Ya fucked up this is a special case
-                    houseSizes = new List<int>(){2, 2};
+                    int anotherTry = houseSizes.FindIndex(x => x == 4);
+                    if (anotherTry > -1)
+                    {
+                        // Eat the rich
+                        houseSizes[anotherTry] = houseSizes[anotherTry] - 1;
+                        houseSizes.Add(2);
+                    }
+                    else
+                    {
+                        // Ya fucked up this is a special case
+                        houseSizes = new List<int>(){2, 2};
+                    }
                 }
                 else
                 {
@@ -140,9 +240,10 @@ namespace Clown
             return houseSizes;
         }
 
-        private void PlaceHouses(List<int> houseSizes, Vector3Int startingCell, int direction)
+        private void PlaceHouses(List<int> houseSizes, Vector3Int startingCell, int[] directions)
         {
             // Assumes there's at least a 2x2 space to hold the houses.
+            int direction = directions.Length > 1 ? directions[UnityEngine.Random.Range(0, directions.Length)] : directions[0];
             int countSize = direction % 2 == 0 ? startingCell.y : startingCell.x;
             foreach (int houseSize in houseSizes)
             {
@@ -274,20 +375,20 @@ namespace Clown
             switch (homeCellData[homeEntry].direction)
             {
                 case 0:
-                    x = randomHomeEntryWorld.x + 30;
-                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 7, randomHomeEntryWorld.y + 26);
+                    x = randomHomeEntryWorld.x + 32;
+                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 5, randomHomeEntryWorld.y + 24);
                     break;
                 case 1:
-                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 7, randomHomeEntryWorld.x + 26);
-                    y = randomHomeEntryWorld.y + 30;
+                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 5, randomHomeEntryWorld.x + 24);
+                    y = randomHomeEntryWorld.y + 32;
                     break;
                 case 2:
-                    x = randomHomeEntryWorld.x + 2;
-                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 7, randomHomeEntryWorld.y + 26);
+                    x = randomHomeEntryWorld.x;
+                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 5, randomHomeEntryWorld.y + 24);
                     break;
                 case 3:
-                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 7, randomHomeEntryWorld.x + 26);
-                    y = randomHomeEntryWorld.y + 2;
+                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 5, randomHomeEntryWorld.x + 24);
+                    y = randomHomeEntryWorld.y;
                     break;
             }
             return new Vector3(x, y, 0);

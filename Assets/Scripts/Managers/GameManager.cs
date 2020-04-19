@@ -17,6 +17,7 @@ namespace Clown
         public GameObject childPrefab;
         public GameObject copPrefab;
         public Camera ppCamera;
+        public GameObject mobHolder;
 
         public int level = 0;
 
@@ -32,6 +33,7 @@ namespace Clown
             }
             DontDestroyOnLoad(gameObject);
             ppCamera = FindObjectOfType<Camera>();
+            mobHolder = new GameObject("MobHolder");
         }
 
         void Start()
@@ -48,7 +50,8 @@ namespace Clown
 
         void SpawnChild()
         {
-            Instantiate(childPrefab, MapManager.s.GetRandomChildSpawnWorld(), Quaternion.identity);
+            GameObject childInstance = Instantiate(childPrefab, MapManager.s.GetRandomChildSpawnWorld(), Quaternion.identity);
+            childInstance.transform.SetParent(mobHolder.transform);
         }
 
         void FixedUpdate()
