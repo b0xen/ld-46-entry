@@ -43,7 +43,7 @@ namespace Clown
             ppCamera.transform.position = new Vector3(playerObject.transform.position.x, playerObject.transform.position.y, -5);
             ppCamera.transform.SetParent(playerObject.transform);
 
-            InvokeRepeating("SpawnChild", 1.0f, 1.0f);
+            InvokeRepeating("SpawnChild", .5f, .7f);
         }
 
         void SpawnChild()

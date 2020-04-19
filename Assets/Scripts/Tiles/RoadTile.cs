@@ -47,10 +47,10 @@ namespace Clown
         // As the rotation is determined by the RoadTile, the TileFlags.OverrideTransform is set for the tile.
         public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData)
         {
-            int mask = HasValidAdjacentTile(tilemap, location + new Vector3Int(1, 0, 0), 2) ? 1 : 0;
-            mask += HasValidAdjacentTile(tilemap, location + new Vector3Int(0, 1, 0), 3) ? 2 : 0;
-            mask += HasValidAdjacentTile(tilemap, location + new Vector3Int(-1, 0, 0), 0) ? 4 : 0;
-            mask += HasValidAdjacentTile(tilemap, location + new Vector3Int(0, -1, 0), 1) ? 8 : 0;
+            int mask = HasValidAdjacentOrVoidTile(tilemap, location + new Vector3Int(1, 0, 0), 2) ? 1 : 0;
+            mask += HasValidAdjacentOrVoidTile(tilemap, location + new Vector3Int(0, 1, 0), 3) ? 2 : 0;
+            mask += HasValidAdjacentOrVoidTile(tilemap, location + new Vector3Int(-1, 0, 0), 0) ? 4 : 0;
+            mask += HasValidAdjacentOrVoidTile(tilemap, location + new Vector3Int(0, -1, 0), 1) ? 8 : 0;
             int index = GetIndex((byte)mask);
             tileData.sprite = tileSprites[index];
             var m = tileData.transform;
@@ -64,6 +64,10 @@ namespace Clown
             // direction is the direction that HomeEntryTile would have to face for it to be compatible
             Tile adjacentTile = tilemap.GetTile(position) as Tile;
             return adjacentTile == this || (adjacentTile is HomeEntryTile && MapManager.s.homeCellData[position].direction == direction);
+        }
+        private bool HasValidAdjacentOrVoidTile(ITilemap tilemap, Vector3Int position, int direction)
+        {
+            return HasValidAdjacentTile(tilemap, position, direction) || tilemap.GetTile(position) as Tile is VoidTile;
         }
         // The following determines which sprite to use based on the number of adjacent RoadTiles
         private int GetIndex(byte mask)

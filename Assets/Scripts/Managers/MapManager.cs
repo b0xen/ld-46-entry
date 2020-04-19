@@ -339,7 +339,11 @@ namespace Clown
             Vector3Int nextMappedCell = startCell;
             while(nextMappedCell != endCell)
             {
-                foundPath.Enqueue(tilemap.GetCellCenterWorld(map[nextMappedCell]));
+                // Apply some randomization to positions of road cells
+                foundPath.Enqueue(tilemap.GetCellCenterWorld(map[nextMappedCell]) + ((tilemap.GetTile(nextMappedCell) is RoadTile) ? 
+                    new Vector3(UnityEngine.Random.Range(-6, 7), UnityEngine.Random.Range(-6, 7), 0) : 
+                    Vector3.zero
+                ));
                 nextMappedCell = map[nextMappedCell];
             }
 
