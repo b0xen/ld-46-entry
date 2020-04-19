@@ -63,7 +63,7 @@ namespace Clown
         {
             // direction is the direction that HomeEntryTile would have to face for it to be compatible
             Tile adjacentTile = tilemap.GetTile(position) as Tile;
-            return adjacentTile == this || (adjacentTile is HomeEntryTile && MapManager.s.homeCellData[position].direction == direction);
+            return adjacentTile == this || adjacentTile is SewerTile || (adjacentTile is HomeEntryTile && MapManager.s.homeCellData[position].direction == direction);
         }
         private bool HasValidAdjacentOrVoidTile(ITilemap tilemap, Vector3Int position, int direction)
         {

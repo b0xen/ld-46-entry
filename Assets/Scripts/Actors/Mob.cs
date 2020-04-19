@@ -13,35 +13,49 @@ namespace Clown
         [NonSerialized] public Rigidbody2D rb2D;
 
         [NonSerialized] public Vector3 lastPosition;
-        [NonSerialized] public Vector3 targetPosition;
+        public Vector3 targetPosition;
         [NonSerialized] public Vector3Int targetCell;
         [NonSerialized] public Vector3 movePosition;
         [NonSerialized] public Queue<Vector3> pathNodes;
-        [NonSerialized] public Transform playerTransform;
+        [NonSerialized] public Player player;
         public float baseSpeed;
         [NonSerialized] public float currentSpeed;
+        [NonSerialized] public Collider2D mobCollider;
 
         void Awake()
         {
             rb2D = GetComponent<Rigidbody2D>();
             currentSpeed = baseSpeed;
+            mobCollider = GetComponent<Collider2D>();
+            player = FindObjectOfType<Player>();
         }
 
         void Start()
         {
             GameManager.s.mobs.Add(this);
             currentCell = homeCell = MapManager.s.tilemap.WorldToCell(transform.position);
-            targetPosition = GetTargetPosition();
-            targetCell = MapManager.s.tilemap.WorldToCell(targetPosition);
-
-            // Time to traverse the nodes
-            pathNodes = MapManager.s.FindPath(homeCell, targetCell);
+            do
+            {
+                // Time to traverse the nodes
+                SetTargetAndPath();
+            }
+            while (pathNodes.Count == 0);
             movePosition = pathNodes.Dequeue();
+            DoOnStart();
         }
 
         public abstract Vector3 GetTargetPosition();
 
         public abstract void MoveMob();
+
+        public virtual void DoOnStart() {}
+
+        public virtual void SetTargetAndPath()
+        {
+            targetPosition = GetTargetPosition();
+            targetCell = MapManager.s.tilemap.WorldToCell(targetPosition);
+            pathNodes = MapManager.s.FindPath(homeCell, targetCell);
+        }
 
         protected void MoveTowards(Vector3 direction, bool unstuck = true)
         {

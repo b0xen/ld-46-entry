@@ -17,7 +17,7 @@ namespace Clown
             int spriteIndex = 0;
             // This shit better exist before you try this
             int spriteDirection = MapManager.s.homeCellData[cell].direction;
-            Vector3Int vectorDirection = cell - MapManager.s.homeCellData[cell].homeEntryCell;
+            Vector3Int vectorDirection = cell - MapManager.s.homeCellData[cell].cell;
             if (vectorDirection.x < 0)
             {
                 if (vectorDirection.y < 0)

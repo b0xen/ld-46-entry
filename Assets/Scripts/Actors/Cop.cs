@@ -5,31 +5,29 @@ using System;
 
 namespace Clown
 {
-    public class Child : Mob
+    public class Cop : Mob
     {
-        [NonSerialized] public bool isGrabbed = false;
+        public override void DoOnStart()
+        {
+            // Repath every two seconds
+            InvokeRepeating("SetTargetAndPath", .5f, .5f);
+        }
 
         public override Vector3 GetTargetPosition()
         {
-            int targetCellIndex = UnityEngine.Random.Range(0, MapManager.s.homeCells.Count);
-            Vector3Int targetCell = MapManager.s.homeCells[targetCellIndex];
-            while (targetCell == homeCell)
-            {
-                targetCellIndex = UnityEngine.Random.Range(0, MapManager.s.homeCells.Count);
-                targetCell = MapManager.s.homeCells[targetCellIndex];
-            }
+            return player.transform.position;
+        }
 
-            return MapManager.s.CellToRandomValidEntryPoint(targetCell);
+        public override void SetTargetAndPath()
+        {
+            targetPosition = GetTargetPosition();
+            targetCell = MapManager.s.tilemap.WorldToCell(targetPosition);
+            pathNodes = MapManager.s.FindPath(currentCell, targetCell);
         }
 
         public override void MoveMob()
         {
-            if (isGrabbed)
-            {
-                MoveTowards((transform.position - player.transform.position).normalized, false);
-                return;
-            }
-
+            bool teleport = true;
             // Random wiggling
             Vector3 offset = new Vector3(UnityEngine.Random.Range(-.2f, .2f), UnityEngine.Random.Range(-.2f, .2f), 0);
             // STOP COLLIDING WITH EACH OTHER MORONS LMAO
@@ -40,7 +38,7 @@ namespace Clown
                 if (i == 0) continue;
                 float angle = Mathf.Deg2Rad * ((45 * i) + Vector3.SignedAngle(Vector3.right, movePosition - transform.position, Vector3.forward));
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)), 10);
-                if (hit.collider != null && (hit.transform.GetComponent<Player>() || hit.transform.GetComponent<Mob>()))
+                if (hit.collider != null && hit.transform.GetComponent<Mob>())
                 {
                     if (hit.distance < smallestDistance)
                     {
@@ -53,25 +51,20 @@ namespace Clown
             }
             offset += antiCollisionVector;
             
-            if (Vector3.Distance(transform.position, targetPosition) < 1)
+            if (mobCollider.IsTouching(player.GetComponent<Collider2D>()))
             {
-                // You're donezo kid
-                GameManager.s.mobsToClear.Add(this);
+                GameManager.s.DamagePlayer();
             }
-            else if (pathNodes.Count == 0 && movePosition != targetPosition)
+            else if (Vector3.Distance(transform.position, player.transform.position) <= 32)
             {
-                movePosition = targetPosition;
+                movePosition = player.transform.position;
+                teleport = false;
             }
-            else if (
-                // You're on the last node and close enough so fuck it
-                (pathNodes.Count == 1 && Vector3.Distance(movePosition, transform.position) < 10) ||
-                // You're not on the last node and you need to get closer
-                (Vector3.Distance(movePosition, transform.position) < 5 && pathNodes.Count > 0)
-            )
+            else if (Vector3.Distance(movePosition, transform.position) < 5 && pathNodes.Count > 0)
             {
                 movePosition = pathNodes.Dequeue();
             }
-            MoveTowards(((movePosition - transform.position).normalized + offset).normalized);
+            MoveTowards(((movePosition - transform.position).normalized + offset).normalized, teleport);
         }
     }
 }

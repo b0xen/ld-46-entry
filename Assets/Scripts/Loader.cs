@@ -11,13 +11,13 @@ namespace Clown
         
         void Awake()
         {
-            if (GameManager.s == null)
-            {
-                Instantiate(gameManager);
-            }
             if (MapManager.s == null)
             {
                 Instantiate(mapManager);
+            }
+            if (GameManager.s == null)
+            {
+                Instantiate(gameManager);
             }
         }
     }

@@ -47,7 +47,11 @@ MonoBehaviour:
     type: 3}
   childPrefab: {fileID: 8142856139129339563, guid: 5e4ab86ec373baf47b21b77a560232f8,
     type: 3}
-  copPrefab: {fileID: 0}
-  ppCamera: {fileID: 0}
-  mobs: []
+  copPrefab: {fileID: 7659849068517221948, guid: c43d5a9cf680a1e4780d4d4c3df1485c,
+    type: 3}
+  eatenText: {fileID: 0}
+  timerText: {fileID: 0}
   level: 0
+  kidsToEat: 5
+  kidsEaten: 0
+  timer: 0

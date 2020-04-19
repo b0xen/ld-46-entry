@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roadTile: {fileID: 11400000, guid: 8836b411f41e55f44a0bd3e48683b5f0, type: 2}
+  sewerTile: {fileID: 11400000, guid: dc1c56281e8ab6b489a04123073c0013, type: 2}
   yardTile: {fileID: 11400000, guid: 2c34a06b2f5c8914bba5e3c65d73c3cb, type: 2}
   voidTile: {fileID: 11400000, guid: 5655ca657b6a397409eb35b778d556a9, type: 2}
   homeEntryTile: {fileID: 11400000, guid: 4a7b77d8da624c04c9f879a80238d81c, type: 2}

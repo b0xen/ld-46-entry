@@ -6,27 +6,30 @@ using System;
 
 namespace Clown
 {
-    public struct HomeCellData 
+    public struct CellData 
     {
-        public HomeCellData(int _direction, Vector3Int _homeEntryCell)
+        public CellData(int _direction, Vector3Int _cell)
         {
             direction = _direction;
-            homeEntryCell = _homeEntryCell;
+            cell = _cell;
         }
         public int direction {get;}
-        public Vector3Int homeEntryCell {get;}
+        public Vector3Int cell {get;}
     }
     public class MapManager : MonoBehaviour
     {
         [NonSerialized] public static MapManager s;
         [NonSerialized] public Tilemap tilemap;
-        [NonSerialized] public List<Vector3Int> homeCells = new List<Vector3Int>();
         // Dear lord forgive me for this jank
-        [NonSerialized] public Dictionary<Vector3Int, HomeCellData> homeCellData = new Dictionary<Vector3Int, HomeCellData>();
+        [NonSerialized] public List<Vector3Int> homeCells = new List<Vector3Int>();
+        [NonSerialized] public Dictionary<Vector3Int, CellData> homeCellData = new Dictionary<Vector3Int, CellData>();
+        [NonSerialized] public List<Vector3Int> sewerCells = new List<Vector3Int>();
+        [NonSerialized] public Dictionary<Vector3Int, Vector3> sewerCellData = new Dictionary<Vector3Int, Vector3>();
         [NonSerialized] public List<Vector3Int> nodes = new List<Vector3Int>();
         [NonSerialized] public List<List<Vector3Int>> adjacentNodes = new List<List<Vector3Int>>();
 
         public RoadTile roadTile;
+        public SewerTile sewerTile;
         public YardTile yardTile;
         public VoidTile voidTile;
         public HomeEntryTile homeEntryTile;
@@ -195,6 +198,38 @@ namespace Clown
             PlaceHouses(ChooseHouseSizes(6), new Vector3Int(25, 28, 0), new int[]{3});
             PlaceHouses(ChooseHouseSizes(5), new Vector3Int(32, 28, 0), new int[]{3});
             PlaceHouses(ChooseHouseSizes(2), new Vector3Int(38, 28, 0), new int[]{2, 3});
+
+            // Pick some road tiles to replace with sewer tiles and remember their locations
+            int sewerCount = Math.Max(15 - GameManager.s.level, 4);
+            while (sewerCount > 0)
+            {
+                Vector3Int cell = new Vector3Int(UnityEngine.Random.Range(0, LEVEL_DEFINITION.GetLength(0)), UnityEngine.Random.Range(0, LEVEL_DEFINITION.GetLength(1)), 0);
+                Tile tile = tilemap.GetTile(cell) as Tile;
+                int theCount = 0;
+                if (tile is RoadTile && !sewerCells.Exists(x => x == cell))
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector3Int newCell = new Vector3Int(cell.x + Constants.ORTHOGONAL_DIRECTIONS[i,0], cell.y + Constants.ORTHOGONAL_DIRECTIONS[i,1], cell.z);
+                        Tile adjacentTile = tilemap.GetTile(newCell) as Tile;
+                        int direction = (i + 2) % 4;
+                        if (adjacentTile is RoadTile || 
+                            adjacentTile is SewerTile || 
+                            adjacentTile is VoidTile || 
+                            (adjacentTile is HomeEntryTile && homeCellData[newCell].direction == direction)
+                        )
+                        {
+                            theCount += 1;
+                        }
+                    }
+                    if (theCount < 4)
+                    {
+                        sewerCells.Add(cell);
+                        tilemap.SetTile(cell, sewerTile);
+                        sewerCount -= 1;
+                    }
+                }
+            }
         }
 
         private List<int> ChooseHouseSizes(int length)
@@ -319,7 +354,7 @@ namespace Clown
                         new Vector3Int(newStart + 1, startingCell.y + 1, 0),
                     };
                 }
-                HomeCellData newHomeCellData = new HomeCellData(direction, new Vector3Int(startingCell.x, newStart, 0));
+                CellData newHomeCellData = new CellData(direction, new Vector3Int(startingCell.x, newStart, 0));
                 Tile[] homeTiles = new Tile[]{};
                 Vector3Int homeCell = new Vector3Int(startingCell.x + 1, newStart, 0);
 
@@ -342,7 +377,7 @@ namespace Clown
                         homeTiles = new Tile[]{homeEntryTile, homeOtherTile, homeOtherTile, homeOtherTile};
                         break;
                 }
-                newHomeCellData = new HomeCellData(direction, homeCell);
+                newHomeCellData = new CellData(direction, homeCell);
                 homeCells.Add(homeCell);
 
                 for (int i = 0; i < newHomeCells.Length; i++)
@@ -366,6 +401,22 @@ namespace Clown
             return CellToRandomValidEntryPoint(randomHomeEntry);
         }
 
+        public Vector3 GetRandomCopSpawnWorld()
+        {
+            Vector3Int[] possibleCells = new Vector3Int[] {
+                new Vector3Int(0, 2, 0),
+                new Vector3Int(2, 0, 0),
+                new Vector3Int(LEVEL_DEFINITION.GetLength(0) - 3, 0, 0),
+                new Vector3Int(LEVEL_DEFINITION.GetLength(0) - 1, 2, 0),
+
+                new Vector3Int(0, LEVEL_DEFINITION.GetLength(1) - 3, 0),
+                new Vector3Int(2, LEVEL_DEFINITION.GetLength(1) - 1, 0),
+                new Vector3Int(LEVEL_DEFINITION.GetLength(0) - 3, LEVEL_DEFINITION.GetLength(1) - 1, 0),
+                new Vector3Int(LEVEL_DEFINITION.GetLength(0) - 1, LEVEL_DEFINITION.GetLength(1) - 3, 0),
+            };
+            return tilemap.GetCellCenterWorld(possibleCells[UnityEngine.Random.Range(0, possibleCells.Length)]);
+        }
+
         public Vector3 CellToRandomValidEntryPoint(Vector3Int homeEntry)
         {
             Vector3 randomHomeEntryWorld = tilemap.CellToWorld(homeEntry);
@@ -376,18 +427,18 @@ namespace Clown
             {
                 case 0:
                     x = randomHomeEntryWorld.x + 32;
-                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 5, randomHomeEntryWorld.y + 24);
+                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 9, randomHomeEntryWorld.y + 24);
                     break;
                 case 1:
-                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 5, randomHomeEntryWorld.x + 24);
+                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 9, randomHomeEntryWorld.x + 24);
                     y = randomHomeEntryWorld.y + 32;
                     break;
                 case 2:
                     x = randomHomeEntryWorld.x;
-                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 5, randomHomeEntryWorld.y + 24);
+                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 9, randomHomeEntryWorld.y + 24);
                     break;
                 case 3:
-                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 5, randomHomeEntryWorld.x + 24);
+                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 9, randomHomeEntryWorld.x + 24);
                     y = randomHomeEntryWorld.y;
                     break;
             }
