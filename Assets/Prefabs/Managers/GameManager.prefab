@@ -45,5 +45,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 2914336741551000933, guid: 36ced024181ccb24ab9093d65aacd648,
     type: 3}
-  ppCameraPrefab: {fileID: 8297712462593931687, guid: ab38faaedd9e8d248ac5e4ed7965e8e7,
+  childPrefab: {fileID: 8142856139129339563, guid: 5e4ab86ec373baf47b21b77a560232f8,
     type: 3}
+  copPrefab: {fileID: 0}
+  ppCamera: {fileID: 0}
+  mobs: []
+  level: 0

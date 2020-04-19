@@ -10,11 +10,15 @@ namespace Clown
     {
         [NonSerialized] public static GameManager s;
         [NonSerialized] public GameObject playerObject;
+        [NonSerialized] public List<Mob> mobs = new List<Mob>();
+        [NonSerialized] public List<Mob> mobsToClear = new List<Mob>();
 
         public GameObject playerPrefab;
+        public GameObject childPrefab;
+        public GameObject copPrefab;
         public Camera ppCamera;
-        public List<Mob> mobs;
-        public int level;
+
+        public int level = 0;
 
         void Awake()
         {
@@ -27,9 +31,7 @@ namespace Clown
                 Destroy(gameObject);
             }
             DontDestroyOnLoad(gameObject);
-            mobs = new List<Mob>();
             ppCamera = FindObjectOfType<Camera>();
-            level = 0;
         }
 
         void Start()
@@ -40,14 +42,27 @@ namespace Clown
             MapManager.s.CreateMap(level);
             ppCamera.transform.position = new Vector3(playerObject.transform.position.x, playerObject.transform.position.y, -5);
             ppCamera.transform.SetParent(playerObject.transform);
+
+            InvokeRepeating("SpawnChild", 1.0f, 1.0f);
         }
 
-        void Update()
+        void SpawnChild()
+        {
+            Instantiate(childPrefab, MapManager.s.GetRandomChildSpawnWorld(), Quaternion.identity);
+        }
+
+        void FixedUpdate()
         {
             foreach (Mob mob in mobs)
             {
                 mob.MoveMob();
             }
+            foreach (Mob mob in mobsToClear)
+            {
+                mobs.Remove(mob);
+                Destroy(mob.gameObject);
+            }
+            mobsToClear.Clear();
         }
     }
 }

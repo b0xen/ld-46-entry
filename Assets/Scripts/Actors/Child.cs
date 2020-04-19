@@ -7,33 +7,35 @@ namespace Clown
 {
     public class Child : Mob
     {
-        // Start is called before the first frame update
-        void Start()
+        public override Vector3 GetTargetPosition()
         {
-            
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
-
-        public override Vector3Int GetTargetCell()
-        {
-            int targetCellIndex;
-            do
+            int targetCellIndex = UnityEngine.Random.Range(0, MapManager.s.homeCells.Count);
+            Vector3Int targetCell = MapManager.s.homeCells[targetCellIndex];
+            while (targetCell == homeCell)
             {
                 targetCellIndex = UnityEngine.Random.Range(0, MapManager.s.homeCells.Count);
+                targetCell = MapManager.s.homeCells[targetCellIndex];
             }
-            while (MapManager.s.homeCells[targetCellIndex] != homeCell);
 
-            return MapManager.s.homeCells[targetCellIndex];
+            return MapManager.s.CellToRandomValidEntryPoint(targetCell);
         }
 
         public override void MoveMob()
         {
-            
+            if (Vector3.Distance(transform.position, targetPosition) < .5)
+            {
+                // You're donezo kid
+                GameManager.s.mobsToClear.Add(this);
+            }
+            else if (pathNodes.Count == 0)
+            {
+                movePosition = targetPosition;
+            }
+            else if ((transform.position - movePosition).sqrMagnitude < 5 && pathNodes.Count > 0)
+            {
+                movePosition = pathNodes.Dequeue();
+            }
+            Move();
         }
     }
 }

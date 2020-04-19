@@ -33,7 +33,7 @@ namespace Clown
         public HomeOtherTile homeOtherTile;
 
         public static int[,] LEVEL_SIZE = new int[,] {
-            {21, 12},
+            {21, 21},
             {25, 15}
         };
         void Awake()
@@ -103,6 +103,8 @@ namespace Clown
             PlaceHouses(ChooseHouseSizes(maxX - 6), new Vector3Int(3, maxY - 5, 0), 1);
             PlaceHouses(ChooseHouseSizes(maxY - (6 + 4)), new Vector3Int(3, 3 + 2, 0), 2);
             PlaceHouses(ChooseHouseSizes(maxY - (6 + 4)), new Vector3Int(maxX - 5, 3 + 2, 0), 0);
+        
+            // TODO stretch goal put in some roads that go in between the houses because it's boring
         }
 
         private List<int> ChooseHouseSizes(int length)
@@ -197,10 +199,10 @@ namespace Clown
                 }
 
                 int newStart = countSize + (yardSide * (houseSize - 2));
-                Vector3Int[] homeCells = new Vector3Int[] {};
+                Vector3Int[] newHomeCells = new Vector3Int[] {};
                 if (direction % 2 == 0)
                 {
-                     homeCells = new Vector3Int[] {
+                     newHomeCells = new Vector3Int[] {
                         new Vector3Int(startingCell.x, newStart, 0),
                         new Vector3Int(startingCell.x + 1, newStart, 0),
                         new Vector3Int(startingCell.x, newStart + 1, 0),
@@ -209,7 +211,7 @@ namespace Clown
                 }
                 else 
                 {
-                    homeCells = new Vector3Int[] {
+                    newHomeCells = new Vector3Int[] {
                         new Vector3Int(newStart, startingCell.y, 0),
                         new Vector3Int(newStart, startingCell.y + 1, 0),
                         new Vector3Int(newStart + 1, startingCell.y, 0),
@@ -218,35 +220,130 @@ namespace Clown
                 }
                 HomeCellData newHomeCellData = new HomeCellData(direction, new Vector3Int(startingCell.x, newStart, 0));
                 Tile[] homeTiles = new Tile[]{};
+                Vector3Int homeCell = new Vector3Int(startingCell.x + 1, newStart, 0);
 
                 switch (direction)
                 {
                     case 0:
-                        newHomeCellData = new HomeCellData(direction, new Vector3Int(startingCell.x + 1, newStart, 0));
+                        homeCell = new Vector3Int(startingCell.x + 1, newStart, 0);
                         homeTiles = new Tile[]{homeOtherTile, homeEntryTile, homeOtherTile, homeOtherTile};
                         break;
                     case 1:
-                        newHomeCellData = new HomeCellData(direction, new Vector3Int(newStart + 1, startingCell.y + 1, 0));
+                        homeCell = new Vector3Int(newStart + 1, startingCell.y + 1, 0);
                         homeTiles = new Tile[]{homeOtherTile, homeOtherTile, homeOtherTile, homeEntryTile};
                         break;
                     case 2:
-                        newHomeCellData = new HomeCellData(direction, new Vector3Int(startingCell.x, newStart + 1, 0));
+                        homeCell = new Vector3Int(startingCell.x, newStart + 1, 0);
                         homeTiles = new Tile[]{homeOtherTile, homeOtherTile, homeEntryTile, homeOtherTile};
                         break;
                     case 3:
-                        newHomeCellData = new HomeCellData(direction, new Vector3Int(newStart, startingCell.y, 0));
+                        homeCell = new Vector3Int(newStart, startingCell.y, 0);
                         homeTiles = new Tile[]{homeEntryTile, homeOtherTile, homeOtherTile, homeOtherTile};
                         break;
                 }
+                newHomeCellData = new HomeCellData(direction, homeCell);
+                homeCells.Add(homeCell);
 
-                for (int i = 0; i < homeCells.Length; i++)
+                for (int i = 0; i < newHomeCells.Length; i++)
                 {
-                    homeCellData.Add(homeCells[i], newHomeCellData);
+                    homeCellData.Add(newHomeCells[i], newHomeCellData);
                 }
 
-                tilemap.SetTiles(homeCells, homeTiles);
+                tilemap.SetTiles(newHomeCells, homeTiles);
                 countSize += houseSize;
             }
+        }
+
+        public Vector3Int GetRandomHomeEntryCell()
+        {
+            return homeCells[UnityEngine.Random.Range(0, homeCells.Count)];
+        }
+
+        public Vector3 GetRandomChildSpawnWorld()
+        {
+            Vector3Int randomHomeEntry = GetRandomHomeEntryCell();
+            return CellToRandomValidEntryPoint(randomHomeEntry);
+        }
+
+        public Vector3 CellToRandomValidEntryPoint(Vector3Int homeEntry)
+        {
+            Vector3 randomHomeEntryWorld = tilemap.CellToWorld(homeEntry);
+            float x = 0;
+            float y = 0;
+            // Oh boy here come the magic numbers.
+            switch (homeCellData[homeEntry].direction)
+            {
+                case 0:
+                    x = randomHomeEntryWorld.x + 30;
+                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 7, randomHomeEntryWorld.y + 26);
+                    break;
+                case 1:
+                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 7, randomHomeEntryWorld.x + 26);
+                    y = randomHomeEntryWorld.y + 30;
+                    break;
+                case 2:
+                    x = randomHomeEntryWorld.x + 2;
+                    y = UnityEngine.Random.Range(randomHomeEntryWorld.y + 7, randomHomeEntryWorld.y + 26);
+                    break;
+                case 3:
+                    x = UnityEngine.Random.Range(randomHomeEntryWorld.x + 7, randomHomeEntryWorld.x + 26);
+                    y = randomHomeEntryWorld.y + 2;
+                    break;
+            }
+            return new Vector3(x, y, 0);
+        }
+
+        public Queue<Vector3> FindPath(Vector3Int startCell, Vector3Int endCell)
+        {
+            int nodeIndex = nodes.FindIndex(x => x == endCell);
+            // BFS BABYYYY
+            Queue<Vector3Int> nodeQueue = new Queue<Vector3Int>();
+            Queue<Vector3> foundPath = new Queue<Vector3>();
+            Dictionary<Vector3Int, bool> visited = new Dictionary<Vector3Int, bool>();
+            Dictionary<Vector3Int, Vector3Int> map = new Dictionary<Vector3Int, Vector3Int>();
+            visited[endCell] = true;
+
+            foreach (Vector3Int node in adjacentNodes[nodeIndex])
+            {
+                map[node] = endCell;
+                nodeQueue.Enqueue(node);
+            }
+            while (nodeQueue.Count > 0)
+            {
+                Vector3Int nextNode = nodeQueue.Dequeue();
+                bool isVisited = false;
+                visited.TryGetValue(nextNode, out isVisited);
+                if (!isVisited)
+                {
+                    visited[nextNode] = true;
+                    int nextNodeIndex = nodes.FindIndex(x => x == nextNode);
+                    foreach (Vector3Int nextAdjacentNode in adjacentNodes[nextNodeIndex])
+                    {
+                        bool isAdjacentVisited = false;
+                        visited.TryGetValue(nextAdjacentNode, out isAdjacentVisited);
+                        if (!isAdjacentVisited)
+                        {
+                            map[nextAdjacentNode] = nextNode;
+                            if (nextAdjacentNode == startCell)
+                            {
+                                // WE DID IT
+                                nodeQueue.Clear();
+                            }
+                            nodeQueue.Enqueue(nextAdjacentNode);
+                        }
+                    }
+                }
+            }
+
+            // Build the path queue to return since we're done finding the path
+            Vector3Int nextMappedCell = startCell;
+            while(nextMappedCell != endCell)
+            {
+                foundPath.Enqueue(tilemap.GetCellCenterWorld(map[nextMappedCell]));
+                nextMappedCell = map[nextMappedCell];
+            }
+
+            return foundPath;
         }
     }
 }

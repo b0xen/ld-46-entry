@@ -8,19 +8,19 @@ namespace Clown
     public class Player : MonoBehaviour
     {
         public float speed;
-        private Rigidbody2D rigidBody;
+        private Rigidbody2D rb2D;
 
         void Start()
         {
-            rigidBody = GetComponent<Rigidbody2D>();
+            rb2D = GetComponent<Rigidbody2D>();
         }
 
         void FixedUpdate()
         {
-            float movementX = Input.GetAxis("Horizontal") * speed;
-            float movementY = Input.GetAxis("Vertical") * speed;
+            float movementX = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
+            float movementY = Input.GetAxis("Vertical") * speed * Time.deltaTime;
 
-            rigidBody.MovePosition(new Vector2(transform.position.x + movementX, transform.position.y + movementY));
+            rb2D.MovePosition(new Vector2(transform.position.x + movementX, transform.position.y + movementY));
         }
     }
 }
