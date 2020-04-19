@@ -10,7 +10,7 @@ namespace Clown
         public override void DoOnStart()
         {
             // Repath every two seconds
-            InvokeRepeating("SetTargetAndPath", .5f, .5f);
+            InvokeRepeating("SetTargetAndPath", .2f, .2f);
         }
 
         public override Vector3 GetTargetPosition()

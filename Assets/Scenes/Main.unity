@@ -1079,10 +1079,10 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\n\nA game made for \nLudum Dare 46\n\n\nDrag the children to the sewers
-    to \nappease the Evil Sewer Clown.\n\nPress Z to grab a child.\nMash Z while
-    grabbing to move faster.\nPress X to release the held child.\nBeware of cops.\nPress
-    Z to start!\n"
+  m_Text: "\n\nA game made for \nLudum Dare 46\n\nDrag the children (orange circles)
+    \nto the sewers (gray rectangles) \nto appease the Evil Sewer Clown.\n\nPress
+    Z to grab a child.\nMash Z while grabbing to move faster.\nPress X to release
+    the held child.\nBeware of cops.\nPress Z to start!\n"
 --- !u!222 &1526957460
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1569,6 +1569,11 @@ PrefabInstance:
       propertyPath: gameOverScreen
       value: 
       objectReference: {fileID: 11692647}
+    - target: {fileID: 1440096781669731802, guid: fd091960c33b81e48b18bbc91e97b9ed,
+        type: 3}
+      propertyPath: kidsToEat
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6969702967423150707, guid: fd091960c33b81e48b18bbc91e97b9ed,
         type: 3}
       propertyPath: m_Name

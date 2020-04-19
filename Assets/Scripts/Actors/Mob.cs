@@ -21,6 +21,8 @@ namespace Clown
         public float baseSpeed;
         [NonSerialized] public float currentSpeed;
         [NonSerialized] public Collider2D mobCollider;
+        [NonSerialized] public Color originalColor;
+        [NonSerialized] public Color lightenedColor;
 
         void Awake()
         {
@@ -28,6 +30,8 @@ namespace Clown
             currentSpeed = baseSpeed;
             mobCollider = GetComponent<Collider2D>();
             player = FindObjectOfType<Player>();
+            originalColor = GetComponent<SpriteRenderer>().color;
+            lightenedColor = new Color(originalColor.r * 1.5f, originalColor.g * 1.5f, originalColor.b * 1.5f);
         }
 
         void Start()

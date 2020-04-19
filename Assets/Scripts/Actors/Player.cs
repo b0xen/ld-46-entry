@@ -13,10 +13,12 @@ namespace Clown
         private Rigidbody2D rb2D;
         [NonSerialized] public bool isGrabbing = false;
         [NonSerialized] public Child grabTarget;
+        [NonSerialized] public SpriteRenderer childSpriteRenderer;
         [NonSerialized] public DistanceJoint2D joint;
         [NonSerialized] public float invulnTime = 1f;
         [NonSerialized] public bool isInvuln = false;
         private float slowSpeedMultiplier = .4f;
+        private int ticks = 0;
 
         void Awake()
         {
@@ -55,17 +57,17 @@ namespace Clown
             {
                 foreach (Vector3Int sewerCell in MapManager.s.sewerCells)
                 {
-                    if (Vector3.Distance(transform.position, MapManager.s.sewerCellData[sewerCell]) < 8)
+                    if (Vector3.Distance(transform.position, MapManager.s.sewerCellData[sewerCell]) < 10)
                     {
                         // eat dat kid
                         isGrabbing = false;
                         grabTarget.isGrabbed = false;
                         currentSpeed = baseSpeed;
-                        GameManager.s.kidsEaten += 1;
-                        GameManager.s.eatenText.text = GameManager.s.kidsEaten + "/" + GameManager.s.kidsToEat + " Kids Delivered";
                         GameManager.s.mobsToClear.Add(grabTarget);
                         grabTarget = null;
                         Destroy(joint);
+                        GameManager.s.EatChild();
+                        break;
                     }
                 }
             }
@@ -101,6 +103,7 @@ namespace Clown
                                 isGrabbing = true;
                                 grabTarget = child;
                                 grabTarget.isGrabbed = true;
+                                childSpriteRenderer = grabTarget.GetComponent<SpriteRenderer>();
                                 joint = gameObject.AddComponent<DistanceJoint2D>();
                                 joint.connectedBody = grabTarget.rb2D;
                                 currentSpeed = baseSpeed * slowSpeedMultiplier;
@@ -114,6 +117,17 @@ namespace Clown
 
         void FixedUpdate()
         {
+            if (isGrabbing)
+            {
+                ticks += 1;
+                if (ticks > 8)
+                {
+                    childSpriteRenderer.color = childSpriteRenderer.color.Equals(grabTarget.lightenedColor) ? 
+                        grabTarget.originalColor : 
+                        grabTarget.lightenedColor;
+                    ticks = 0;
+                }
+            }
             if (GameManager.s.blockInput)
             {
                 return;
@@ -128,6 +142,7 @@ namespace Clown
             // drop dat kid
             isGrabbing = false;
             grabTarget.isGrabbed = false;
+            childSpriteRenderer.color = grabTarget.lightenedColor;
             currentSpeed = baseSpeed;
             grabTarget.pathNodes = MapManager.s.FindPath(MapManager.s.tilemap.WorldToCell(grabTarget.transform.position), grabTarget.targetCell);
             while (grabTarget.pathNodes.Count == 0)
@@ -139,6 +154,7 @@ namespace Clown
             grabTarget.currentSpeed = grabTarget.baseSpeed * 2f;
             grabTarget = null;
             Destroy(joint);
+            ticks = 0;
         }
         void LoseSpeed()
         {

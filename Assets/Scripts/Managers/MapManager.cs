@@ -99,7 +99,7 @@ namespace Clown
             tilemap = FindObjectOfType<Tilemap>();
         }
 
-        public void CreateMap(int level)
+        public void CreateMap()
         {
             int maxX = LEVEL_DEFINITION.GetLength(0);
             int maxY = LEVEL_DEFINITION.GetLength(1);

@@ -31,9 +31,9 @@ namespace Clown
 
         public Text eatenText;
         public Text timerText;
-        public int level = 0;
-        public int kidsToEat = 5;
-        public int kidsEaten = 0;
+        public int level;
+        public int kidsToEat;
+        public int kidsEaten;
         public int timer;
 
         void Awake()
@@ -49,6 +49,9 @@ namespace Clown
             DontDestroyOnLoad(gameObject);
             ppCamera = FindObjectOfType<Camera>();
             mobHolder = new GameObject("MobHolder");
+            level = 0;
+            kidsToEat = 0;
+            kidsEaten = 0;
         }
 
         void Start()
@@ -80,27 +83,62 @@ namespace Clown
             CancelInvoke("SpawnChild");
             CancelInvoke("SpawnCop");
             CancelInvoke("DecrementTimer");
+            MapManager.s.tilemap.ClearAllTiles();
+            MapManager.s.homeCells = new List<Vector3Int>();
+            MapManager.s.homeCellData = new Dictionary<Vector3Int, CellData>();
+            MapManager.s.sewerCells = new List<Vector3Int>();
+            MapManager.s.sewerCellData = new Dictionary<Vector3Int, Vector3>();
+            MapManager.s.nodes = new List<Vector3Int>();
+            MapManager.s.adjacentNodes = new List<List<Vector3Int>>();
+            player.currentSpeed = player.baseSpeed;
+            player.isGrabbing = false;
+            player.grabTarget = null;
+            if (player.joint != null)
+            {
+                Destroy(player.joint);
+            }
+            player.invulnTime = 1f;
+            player.isInvuln = false;
 
+            StartCoroutine(WaitOneSecond());
+            ResetTimer();
             kidsEaten = 0;
             level += 1;
             kidsToEat += 2;
 
             levelText.text = "Level " + level;
             setupScreen.SetActive(true);
-            MapManager.s.CreateMap(level);
+            MapManager.s.CreateMap();
             eatenText.text = kidsEaten + "/" + kidsToEat + " Kids Delivered";
+            foreach (Mob mob in mobs)
+            {
+                if (mob != null)
+                {
+                    Destroy(mob.gameObject);
+                }
+            }
+            foreach (Mob mob in mobsToClear)
+            {
+                if (mob != null)
+                {
+                    Destroy(mob.gameObject);
+                }
+            }
             mobs = new List<Mob>();
             mobsToClear = new List<Mob>();
-            ResetTimer();
 
             playerObject.transform.position = MapManager.s.tilemap.GetCellCenterWorld(new Vector3Int(20, 13, 0));
             Invoke("FinishSetup", 2f);
         }
 
+        IEnumerator WaitOneSecond()
+        {
+            yield return new WaitForSeconds(1f);
+        }
         void FinishSetup()
         {
-            InvokeRepeating("SpawnChild", .5f, .7f);
-            InvokeRepeating("SpawnCop", 5f, 10f);
+            InvokeRepeating("SpawnChild", .5f, .7f + .3f * level);
+            InvokeRepeating("SpawnCop", 5f, Math.Max(10f - 1f * level, 2f));
             InvokeRepeating("DecrementTimer", 1f, 1f);
             setupScreen.SetActive(false);
             blockInput = false;
@@ -109,6 +147,7 @@ namespace Clown
         void ResetTimer()
         {
             timer = 120;
+            timerText.text = "Time: " + timer;
         }
 
         void DecrementTimer()
@@ -140,11 +179,17 @@ namespace Clown
                 }
                 player.isInvuln = true;
                 player.invulnTime = 1f;
-                if (player.isGrabbing)
-                {
-                    player.DropChild();
-                }
             }
+        }
+
+        public void EatChild()
+        {
+            kidsEaten += 1;
+            if (kidsEaten >= kidsToEat)
+            {
+                SetupNextLevel();
+            }
+            eatenText.text = kidsEaten + "/" + kidsToEat + " Kids Delivered";
         }
         
         public void Restart()
@@ -152,7 +197,7 @@ namespace Clown
             gameOverScreen.SetActive(false);
             isGameOver = false;
             level = 0;
-            kidsToEat = 5;
+            kidsToEat = 0;
             SetupNextLevel();
         }
 
