@@ -54,6 +54,7 @@ namespace Clown
             if (mobCollider.IsTouching(player.GetComponent<Collider2D>()))
             {
                 GameManager.s.DamagePlayer();
+                teleport = false;
             }
             else if (Vector3.Distance(transform.position, player.transform.position) <= 32)
             {
