@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -12,14 +13,31 @@ namespace Clown
         // Most of this file is copy pasted from Unity's example on scriptable tiles.
 
         public Sprite[] tileSprites;
-        // This refreshes itself and other RoadTiles that are orthogonally and diagonally adjacent
         public override void RefreshTile(Vector3Int cell, ITilemap tilemap)
         {
+            if (!MapManager.s.nodes.Exists(x => x == cell))
+            {
+                MapManager.s.nodes.Add(cell);
+                MapManager.s.adjacentNodes.Add(new List<Vector3Int>());
+            }
+            int nodeIndex = MapManager.s.nodes.FindIndex(x => x == cell);
             tilemap.RefreshTile(cell);
             for (int i = 0; i < 4; i++)
             {
                 Vector3Int newCell = new Vector3Int(cell.x + Constants.ORTHOGONAL_DIRECTIONS[i,0], cell.y + Constants.ORTHOGONAL_DIRECTIONS[i,1], cell.z);
-                if (HasRoadTile(tilemap, newCell)) 
+                if (HasValidAdjacentTile(tilemap, newCell, (i + 2) % 4)) 
+                {
+                    int adjacentNodeIndex = MapManager.s.nodes.FindIndex(x => x == newCell);
+                    if (!MapManager.s.adjacentNodes[nodeIndex].Exists(x => x == newCell))
+                    {
+                        MapManager.s.adjacentNodes[nodeIndex].Add(newCell);
+                    }
+                    if (!MapManager.s.adjacentNodes[adjacentNodeIndex].Exists(x => x == cell))
+                    {
+                        MapManager.s.adjacentNodes[adjacentNodeIndex].Add(cell);
+                    }
+                }
+                if (tilemap.GetTile(newCell) == this)
                 {
                     tilemap.RefreshTile(newCell);
                 }
@@ -29,10 +47,10 @@ namespace Clown
         // As the rotation is determined by the RoadTile, the TileFlags.OverrideTransform is set for the tile.
         public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData)
         {
-            int mask = HasRoadTile(tilemap, location + new Vector3Int(1, 0, 0)) ? 1 : 0;
-            mask += HasRoadTile(tilemap, location + new Vector3Int(0, 1, 0)) ? 2 : 0;
-            mask += HasRoadTile(tilemap, location + new Vector3Int(-1, 0, 0)) ? 4 : 0;
-            mask += HasRoadTile(tilemap, location + new Vector3Int(0, -1, 0)) ? 8 : 0;
+            int mask = HasValidAdjacentTile(tilemap, location + new Vector3Int(1, 0, 0), 2) ? 1 : 0;
+            mask += HasValidAdjacentTile(tilemap, location + new Vector3Int(0, 1, 0), 3) ? 2 : 0;
+            mask += HasValidAdjacentTile(tilemap, location + new Vector3Int(-1, 0, 0), 0) ? 4 : 0;
+            mask += HasValidAdjacentTile(tilemap, location + new Vector3Int(0, -1, 0), 1) ? 8 : 0;
             int index = GetIndex((byte)mask);
             tileData.sprite = tileSprites[index];
             var m = tileData.transform;
@@ -41,9 +59,11 @@ namespace Clown
             tileData.flags = TileFlags.LockTransform;
             tileData.colliderType = ColliderType.Sprite;
         }
-        private bool HasRoadTile(ITilemap tilemap, Vector3Int position)
+        private bool HasValidAdjacentTile(ITilemap tilemap, Vector3Int position, int direction)
         {
-            return tilemap.GetTile(position) == this;
+            // direction is the direction that HomeEntryTile would have to face for it to be compatible
+            Tile adjacentTile = tilemap.GetTile(position) as Tile;
+            return adjacentTile == this || (adjacentTile is HomeEntryTile && MapManager.s.homeCellData[position].direction == direction);
         }
         // The following determines which sprite to use based on the number of adjacent RoadTiles
         private int GetIndex(byte mask)

@@ -12,7 +12,9 @@ namespace Clown
         [NonSerialized] public GameObject playerObject;
 
         public GameObject playerPrefab;
-        public GameObject ppCameraPrefab;
+        public Camera ppCamera;
+        public List<Mob> mobs;
+        public int level;
 
         void Awake()
         {
@@ -25,18 +27,27 @@ namespace Clown
                 Destroy(gameObject);
             }
             DontDestroyOnLoad(gameObject);
+            mobs = new List<Mob>();
+            ppCamera = FindObjectOfType<Camera>();
+            level = 0;
         }
 
         void Start()
         {
-            playerObject = Instantiate(playerPrefab, new Vector3(16, 16, 0), Quaternion.identity);
+            playerObject = Instantiate(playerPrefab, MapManager.s.tilemap.GetCellCenterWorld(new Vector3Int(2, 2, 0)), Quaternion.identity);
             DontDestroyOnLoad(playerObject);
+
+            MapManager.s.CreateMap(level);
+            ppCamera.transform.position = new Vector3(playerObject.transform.position.x, playerObject.transform.position.y, -5);
+            ppCamera.transform.SetParent(playerObject.transform);
         }
 
-        // Update is called once per frame
         void Update()
         {
-            
+            foreach (Mob mob in mobs)
+            {
+                mob.MoveMob();
+            }
         }
     }
 }
